@@ -1,0 +1,11 @@
+{
+	"name": "ohpen-validat-json",
+	"version": "0.0.1",
+	"description": "JSON schema validator",
+	"main": "index.js",
+	"author": "ohpen",
+	"dependencies": {
+		"ajv": "~8.11.0",
+		"glob": "~8.0.3"
+	}
+}
