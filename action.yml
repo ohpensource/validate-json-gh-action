@@ -21,6 +21,7 @@ runs:
         DATA_DIRECTORY: ${{ inputs.data-directory }}
         SCHEMA_TO_DATA_MAPPING: ${{ inputs.schema-to-data-mapping }}
       run: |
+        cd ${{ github.action_path }}
         npm install
         node run index.js
 
