@@ -23,6 +23,6 @@ runs:
       run: |
         cd ${{ github.action_path }}
         npm install
-        node run index.js
+        node index.js
 
 
