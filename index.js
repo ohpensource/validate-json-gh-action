@@ -21,9 +21,7 @@ const validateData = async (schemas, dataPath, schemaPath) => {
 	const data = await fs.promises.readFile(dataPath, fsReadingOptions)
 	const validate = schemas.get(schemaPath)
 	const valid = validate(JSON.parse(data))
-	const summary = new githubCore.summary.constructor()
 	if (!valid) {
-		summary.addRaw('myText')
 		console.log(`Validation errors in file ${dataPath} validated against schema ${schemaPath}: ${JSON.stringify(validate.errors)}`)
 		return {
 			result: false,
@@ -52,7 +50,7 @@ const validateMapping = async (schemas, mapping) => {
 				]
 				if (!validation.result) {
 					summary.push({data: '&#x274c;'})
-					summary.push({data: `\`\`\`json ${validation.errors}\`\`\``})
+					summary.push({data: `<pre lang="json"><code>${JSON.stringify(validation.errors)}</code></pre>`})
 				} else {
 					summary.push({data: '&#x2714;'})
 					summary.push({data: ''})
