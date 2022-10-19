@@ -45,7 +45,7 @@ const validateMapping = async (schemas, mapping) => {
 			for (const file of files) {
 				const validation = await validateData(schemas, file, mapping.schemaPath)
 				const summary = [
-					{data: file},
+					{data: file.replace(`${process.env.DATA_DIRECTORY}/`, '')},
 					{data: mapping.schemaPath}
 				]
 				if (!validation.result) {
