@@ -48,14 +48,13 @@ const validateMapping = async (schemas, mapping) => {
 				const validation = await validateData(schemas, file, mapping.schemaPath)
 				const summary = [
 					{data: file},
-					{data: mapping.schemaPath},
-					{data: validation.result}
+					{data: mapping.schemaPath}
 				]
 				if (!validation.result) {
-					summary.push({data: '&#x274C;'})
+					summary.push({data: '&#x274c;'})
 					summary.push({data: `\`\`\`json ${validation.errors}\`\`\``})
 				} else {
-					summary.push({data: '&#x2705;'})
+					summary.push({data: '&#x2714;'})
 					summary.push({data: ''})
 				}
 				summaries.push(summary)
