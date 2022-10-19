@@ -1,0 +1,9 @@
+*.classpath
+*.project
+*.settings
+
+*.iml
+*.idea
+
+_issues
+node_modules

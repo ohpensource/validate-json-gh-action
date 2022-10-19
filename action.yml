@@ -1,0 +1,28 @@
+name: "validate-json-gh-action"
+description: "validate-json-gh-action"
+inputs:
+  schema-directory:
+    description: "Directory containing schemas"
+    required: true
+  data-directory:
+    description: "Directory containing data (JSON files)"
+    required: true
+  schema-to-data-mapping:
+    description: "JSON array containing mapping between data to validate and schema, example ([{ \"data\": \"**/closecl-grossnet*.json\", \"schemaPath\": \"grossnet.json\" }]"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Validate json
+      shell: bash
+      env:
+        SCHEMAS_DIRECTORY: ${{ inputs.schema-directory }}
+        DATA_DIRECTORY: ${{ inputs.data-directory }}
+        SCHEMA_TO_DATA_MAPPING: ${{ inputs.schema-to-data-mapping }}
+      run: |
+        cd ${{ github.action_path }}
+        npm install
+        node index.js
+
+
