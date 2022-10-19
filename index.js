@@ -50,7 +50,7 @@ const validateMapping = async (schemas, mapping) => {
 				]
 				if (!validation.result) {
 					summary.push({data: '&#x274c;'})
-					summary.push({data: `<pre lang="json"><code>${JSON.stringify(validation.errors)}</code></pre>`})
+					summary.push({data: `<pre lang="json"><code>${JSON.stringify(validation.errors, null, 2)}</code></pre>`})
 				} else {
 					summary.push({data: '&#x2714;'})
 					summary.push({data: ''})
