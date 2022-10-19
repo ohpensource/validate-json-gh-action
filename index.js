@@ -1,6 +1,7 @@
 const Ajv = require('ajv')
 const glob = require('glob')
 const fs = require('fs')
+const githubCore = require('@actions/core')
 
 const ajv = new Ajv({
 						allErrors: true
@@ -20,11 +21,18 @@ const validateData = async (schemas, dataPath, schemaPath) => {
 	const data = await fs.promises.readFile(dataPath, fsReadingOptions)
 	const validate = schemas.get(schemaPath)
 	const valid = validate(JSON.parse(data))
+	const summary = new githubCore.summary.constructor()
 	if (!valid) {
+		summary.addRaw('myText')
 		console.log(`Validation errors in file ${dataPath} validated against schema ${schemaPath}: ${JSON.stringify(validate.errors)}`)
-		return false
+		return {
+			result: false,
+			errors: validate.errors
+		}
 	}
-	return true
+	return {
+		result: true
+	}
 }
 
 const validateMapping = async (schemas, mapping) => {
@@ -35,10 +43,24 @@ const validateMapping = async (schemas, mapping) => {
 			}
 
 			let result = true
+			const summaries = []
 			for (const file of files) {
-				result = await validateData(schemas, file, mapping.schemaPath) && result
+				const validation = await validateData(schemas, file, mapping.schemaPath)
+				const summary = [
+					{data: file},
+					{data: mapping.schemaPath},
+					{data: validation.result}
+				]
+				if (!validation.result) {
+					summary.push({data: `\`\`\`json ${validation.errors}\`\`\``})
+				}
+				summaries.push(summary)
+				result = validation.result && result
 			}
-			resolve(result)
+			resolve({
+						result: result,
+						summaries: summaries
+					})
 		})
 	})
 }
@@ -50,9 +72,16 @@ const validateMapping = async (schemas, mapping) => {
 	const schemas = new Map(await Promise.all(mappings.map(async mapping => await readSchema(mapping.schemaPath))))
 
 	let result = true
+	const summary = new githubCore.summary.constructor()
+	let tableRows = []
+	tableRows.push([{data: 'JSON File', header: true}, {data: 'Schema', header: true}, {data: 'Result', header: true}, {data: 'Errors', header: true}])
 	for (const mapping of mappings) {
-		result = await validateMapping(schemas, mapping) && result
+		const validationResult = await validateMapping(schemas, mapping)
+		result = validationResult && result
+		tableRows = tableRows.concat(validationResult.summaries)
 	}
+	summary.addTable(tableRows)
+	await summary.write()
 
 	if (!result) {
 		throw new Error('Validation failed')
