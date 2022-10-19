@@ -78,7 +78,7 @@ const validateMapping = async (schemas, mapping) => {
 	tableRows.push([{data: 'JSON File', header: true}, {data: 'Schema', header: true}, {data: 'Result', header: true}, {data: 'Errors', header: true}])
 	for (const mapping of mappings) {
 		const validationResult = await validateMapping(schemas, mapping)
-		result = validationResult && result
+		result = validationResult.result && result
 		tableRows = tableRows.concat(validationResult.summaries)
 	}
 	summary.addTable(tableRows)
